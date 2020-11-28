@@ -11,7 +11,9 @@ import com.frankmoley.lil.learningspring.data.repository.RoomRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -60,6 +62,28 @@ public class ReservationService {
         for(Long id : roomReservationMap.keySet()) {
             roomReservations.add(roomReservationMap.get(id));
         }
+        roomReservations.sort(new SortByRoom());
         return roomReservations;
+    }
+
+    public List<Guest> getAllGuests() {
+        Iterable<Guest> guests = this.guestRepository.findAll();
+        List<Guest> guestList = new ArrayList<>();
+        guests.forEach(guestList::add);
+        return guestList;
+    }
+}
+
+class SortByRoom implements Comparator<RoomReservation>
+{
+    // Used for sorting in ascending order of
+    // roll number
+    @Override
+    public int compare(RoomReservation a, RoomReservation b)
+    {
+        if (a.getRoomNumber() == b.getRoomNumber()) {
+            return a.getRoomName().compareTo(b.getRoomName());
+        }
+        return a.getRoomNumber().compareTo(b.getRoomNumber());
     }
 }
