@@ -1,18 +1,25 @@
 package com.example.ec.domain;
 
-import javax.persistence.Entity;
-
+/**
+ * Enumeration of the region of California.
+ *
+ * Created by Mary Ellen Bowman
+ */
 public enum Region {
     Central_Coast("Central Coast"), Southern_California("Southern California"), Northern_California("Northern California"), Varies("Varies");
     private String label;
-    private Region(String label) {
+    Region(String label) {
         this.label = label;
     }
     public static Region findByLabel(String byLabel) {
-        for(Region r: Region.values()) {
+        for(Region r:Region.values()) {
             if (r.label.equalsIgnoreCase(byLabel))
                 return r;
         }
         return null;
+    }
+
+    public String getLabel() {
+        return label;
     }
 }
