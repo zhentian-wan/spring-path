@@ -4,15 +4,15 @@ import com.example.ec.domain.Tour;
 import com.example.ec.domain.TourRating;
 import com.example.ec.repo.TourRatingRepository;
 import com.example.ec.repo.TourRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.OptionalDouble;
+import java.util.*;
 
 /**
  * Tour Rating Service
@@ -50,6 +50,19 @@ public class TourRatingService {
     public void createNew(int tourId, Integer customerId, Integer score, String comment) throws NoSuchElementException {
         tourRatingRepository.save(new TourRating(verifyTour(tourId), customerId,
                 score, comment));
+    }
+
+    /**
+     * Get All Ratings.
+     *
+     * @return List of TourRatings
+     */
+    public List<TourRating> lookupAll()  {
+        return tourRatingRepository.findAll();
+    }
+
+    public Optional<TourRating> lookupRatingById(int id)  {
+        return tourRatingRepository.findById(id);
     }
 
     /**
@@ -133,11 +146,11 @@ public class TourRatingService {
      */
 
     public void rateMany(int tourId,  int score, Integer [] customers) {
-        tourRepository.findById(tourId).ifPresent(tour -> {
-            for (Integer c : customers) {
-                tourRatingRepository.save(new TourRating(tour, c, score));
-            }
-        });
+
+        Tour tour = tourRepository.findById(tourId).orElseThrow(() -> new NoSuchElementException("rateMany, no valid tourId"));
+        for (Integer c : customers) {
+            tourRatingRepository.save(new TourRating(tour, c, score));
+        }
     }
 
     /**

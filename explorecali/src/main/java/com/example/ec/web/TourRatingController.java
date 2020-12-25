@@ -2,6 +2,8 @@ package com.example.ec.web;
 
 import com.example.ec.domain.TourRating;
 import com.example.ec.service.TourRatingService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -23,6 +25,10 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(path = "/tours/{tourId}/ratings")
 public class TourRatingController {
+
+    private static final Logger LOGGER =
+            LoggerFactory.getLogger(TourRatingController.class);
+
     private TourRatingService tourRatingService;
 
     @Autowired
@@ -43,6 +49,7 @@ public class TourRatingController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void createTourRating(@PathVariable(value = "tourId") int tourId, @RequestBody @Validated RatingDto ratingDto) {
+        LOGGER.info("POST /tours/{}/ratings", tourId);
         tourRatingService.createNew(tourId, ratingDto.getCustomerId(), ratingDto.getScore(), ratingDto.getComment());
     }
 
@@ -58,6 +65,7 @@ public class TourRatingController {
     public void createManyTourRatings(@PathVariable(value = "tourId") int tourId,
                                       @PathVariable(value = "score") int score,
                                       @RequestParam("customers") Integer customers[]) {
+        LOGGER.info("POST /tours/{}/ratings", tourId, score);
         tourRatingService.rateMany(tourId, score, customers);
     }
 
